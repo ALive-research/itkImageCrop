@@ -25,6 +25,7 @@ int main (int argc, char **argv)
   std::string outputImage;
   unsigned short ix, iy, iz; // Index
   unsigned short sx, sy, sz; // Size
+  bool compressOutput;
 
 
   // =========================================================================
@@ -42,6 +43,7 @@ int main (int argc, char **argv)
     TCLAP::ValueArg<unsigned short> size_x("u", "size_x", "Size x", true, 0, "unsinged short");
     TCLAP::ValueArg<unsigned short> size_y("v", "size_y", "Size y", true, 0, "unsinged short");
     TCLAP::ValueArg<unsigned short> size_z("w", "size_z", "Size z", true, 0, "unsinged short");
+    TCLAP::SwitchArg compress("c", "compress", "Compress output", false);
 
     cmd.add(input);
     cmd.add(output);
@@ -51,6 +53,7 @@ int main (int argc, char **argv)
     cmd.add(size_x);
     cmd.add(size_y);
     cmd.add(size_z);
+    cmd.add(compress);
 
     cmd.parse(argc,argv);
 
@@ -62,6 +65,7 @@ int main (int argc, char **argv)
     sx = size_x.getValue();
     sy = size_y.getValue();
     sz = size_z.getValue();
+    compressOutput = compress.getValue();
 
   } catch (TCLAP::ArgException &e) {
     std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
@@ -110,6 +114,7 @@ int main (int argc, char **argv)
     auto outputWriter = ImageWriterType::New();
     outputWriter->SetFileName(outputImage);
     outputWriter->SetInput(extractImageFilter->GetOutput());
+    outputWriter->SetUseCompression(compressOutput);
     outputWriter->Write();
   }
 
